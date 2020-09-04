@@ -10,13 +10,13 @@ import 'package:test/test.dart';
 void main() {
   group('Resource Loader', () {
     test('load from packages', () async {
-      var contents = await loader
-          .loadAsString('package:dartdoc/templates/html/index.html');
+      var contents =
+          await loader.loadAsBytes('package:dartdoc/resources/styles.css');
       expect(contents, isNotNull);
     });
 
     test('throws if non-package', () async {
-      expect(loader.loadAsString('wefoij:something'), throwsArgumentError);
+      expect(loader.loadAsBytes('wefoij:something'), throwsArgumentError);
     });
   });
 }

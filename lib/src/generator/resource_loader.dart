@@ -5,16 +5,8 @@
 /// Make it possible to load resources from the dartdoc code repository.
 library dartdoc.resource_loader;
 
-import 'dart:convert' show utf8;
 import 'dart:io' show File;
 import 'dart:isolate' show Isolate;
-
-/// Loads a `package:` resource as a String.
-Future<String> loadAsString(String path) async {
-  var bytes = await loadAsBytes(path);
-
-  return utf8.decode(bytes);
-}
 
 /// Loads a `package:` resource as an [List<int>].
 Future<List<int>> loadAsBytes(String path) async {

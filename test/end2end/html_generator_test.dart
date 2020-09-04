@@ -10,8 +10,8 @@ import 'package:dartdoc/src/generator/generator_frontend.dart';
 import 'package:dartdoc/src/generator/html_generator.dart';
 import 'package:dartdoc/src/generator/html_resources.g.dart';
 import 'package:dartdoc/src/generator/templates.dart';
-import 'package:dartdoc/src/model/package_graph.dart';
 import 'package:dartdoc/src/io_utils.dart';
+import 'package:dartdoc/src/model/package_graph.dart';
 import 'package:dartdoc/src/warnings.dart';
 import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
@@ -20,8 +20,7 @@ import '../src/utils.dart' as utils;
 
 // Init a generator without a GeneratorContext and with the default file writer.
 Future<Generator> _initGeneratorForTest() async {
-  var backend =
-      HtmlGeneratorBackend(null, await Templates.createDefault('html'));
+  var backend = HtmlGeneratorBackend(null, Templates.createDefault('html'));
   return GeneratorFrontEnd(backend);
 }
 
@@ -29,8 +28,8 @@ void main() {
   group('Templates', () {
     Templates templates;
 
-    setUp(() async {
-      templates = await Templates.createDefault('html');
+    setUp(() {
+      templates = Templates.createDefault('html');
     });
 
     test('index html', () {
@@ -120,7 +119,7 @@ void main() {
         generator = await _initGeneratorForTest();
         packageGraph = await utils.bootBasicPackage(
             testPackageDuplicateDir.path, [], pubPackageMetaProvider);
-        tempOutput = await resourceProvider.createSystemTemp('doc_test_temp');
+        tempOutput = resourceProvider.createSystemTemp('doc_test_temp');
         writer = DartdocFileWriter(tempOutput.path, resourceProvider);
       });
 
@@ -148,10 +147,13 @@ const Matcher doesExist = _DoesExist();
 
 class _DoesExist extends Matcher {
   const _DoesExist();
+
   @override
   bool matches(dynamic item, Map matchState) => (item as Resource).exists;
+
   @override
   Description describe(Description description) => description.add('exists');
+
   @override
   Description describeMismatch(dynamic item, Description mismatchDescription,
       Map matchState, bool verbose) {
