@@ -13,11 +13,10 @@
   <link rel="canonical" href="{{{relCanonicalPrefix}}}/{{{bareHref}}}">
   {{ /relCanonicalPrefix}}
 
-  {{#useBaseHref}}{{! TODO(jdkoren): remove when the useBaseHref option is removed.}}
-  {{#htmlBase}}
+  {{#useBaseHref}}
+  {{! TODO(jdkoren): remove when the useBaseHref option is removed.}}
   <!-- required because all the links are pseudo-absolute -->
   <base href="{{{htmlBase}}}">
-  {{/htmlBase}}
   {{/useBaseHref}}
 
   {{! TODO(jdkoren): unwrap ^useBaseHref sections when the option is removed.}}

@@ -1,7 +1,7 @@
 <ol>
-    {{#container}}
+    {{#container.isClass}}
+    {{#container.asClass}}
 
-    {{#isClass}}
     {{#hasPublicConstructors}}
     <li class="section-title"><a href="{{{href}}}#constructors">Constructors</a></li>
     {{#publicConstructorsSorted}}
@@ -52,9 +52,13 @@
     <li>{{{linkedName}}}</li>
     {{/publicConstantFieldsSorted}}
     {{/hasPublicConstantFields}}
-    {{/isClass}}
 
-    {{#isExtension}}
+    {{/container.asClass}}
+    {{/container.isClass}}
+
+    {{#container.isExtension}}
+    {{#container.asExtension}}
+
     {{#hasPublicInstanceFields}}
     <li class="section-title"> <a href="{{{href}}}#instance-properties">Properties</a>
     </li>
@@ -97,7 +101,7 @@
     <li>{{{linkedName}}}</li>
     {{/publicConstantFieldsSorted}}
     {{/hasPublicConstantFields}}
-    {{/isExtension}}
 
-    {{/container}}
+    {{/container.asExtension}}
+    {{/container.isExtension}}
 </ol>

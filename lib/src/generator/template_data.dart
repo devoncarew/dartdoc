@@ -6,7 +6,9 @@ import 'package:dartdoc/src/model/model.dart';
 
 abstract class TemplateOptions {
   String get relCanonicalPrefix;
+
   String get toolVersion;
+
   bool get useBaseHref;
 }
 
@@ -17,11 +19,17 @@ abstract class TemplateData<T extends Documentable> {
   TemplateData(this.htmlOptions, this.packageGraph);
 
   String get title;
+
   String get layoutTitle;
+
   String get metaDescription;
 
+  Library get library;
+
   List<Documentable> get navLinks;
+
   List<Documentable> get navLinksWithGenerics => [];
+
   Documentable get parent {
     if (navLinksWithGenerics.isEmpty) {
       return navLinks.isNotEmpty ? navLinks.last : null;
@@ -33,10 +41,16 @@ abstract class TemplateData<T extends Documentable> {
 
   bool get hasHomepage => false;
 
+  String get homepage => null;
+
   String get htmlBase;
+
   T get self;
+
   String get version => htmlOptions.toolVersion;
+
   String get relCanonicalPrefix => htmlOptions.relCanonicalPrefix;
+
   bool get useBaseHref => htmlOptions.useBaseHref;
 
   String get bareHref {
@@ -53,26 +67,37 @@ abstract class TemplateData<T extends Documentable> {
 
 class PackageTemplateData extends TemplateData<Package> {
   final Package package;
+
   PackageTemplateData(
       TemplateOptions htmlOptions, PackageGraph packageGraph, this.package)
       : super(htmlOptions, packageGraph);
 
   @override
+  Library get library => null;
+
+  @override
   bool get includeVersion => true;
+
   @override
   List<Documentable> get navLinks => [];
+
   @override
   String get title => '${package.name} - Dart API docs';
+
   @override
   Package get self => package;
+
   @override
   String get layoutTitle => _layoutTitle(package.name, package.kind, false);
+
   @override
   String get metaDescription =>
       '${package.name} API docs, for the Dart programming language.';
 
   @override
   bool get hasHomepage => package.hasHomepage;
+
+  @override
   String get homepage => package.homepage;
 
   /// empty for packages because they are at the root – not needed
@@ -86,6 +111,9 @@ class CategoryTemplateData extends TemplateData<Category> {
   CategoryTemplateData(
       TemplateOptions htmlOptions, PackageGraph packageGraph, this.category)
       : super(htmlOptions, packageGraph);
+
+  @override
+  Library get library => null;
 
   @override
   String get title => '${category.name} ${category.kind} - Dart API';
@@ -108,6 +136,7 @@ class CategoryTemplateData extends TemplateData<Category> {
 }
 
 class LibraryTemplateData extends TemplateData<Library> {
+  @override
   final Library library;
 
   LibraryTemplateData(
@@ -116,11 +145,14 @@ class LibraryTemplateData extends TemplateData<Library> {
 
   @override
   String get title => '${library.name} library - Dart API';
+
   @override
   String get htmlBase => '../';
+
   @override
   String get metaDescription =>
       '${library.name} library API docs, for the Dart programming language.';
+
   @override
   List<Documentable> get navLinks => [packageGraph.defaultPackage];
 
@@ -147,6 +179,7 @@ class MixinTemplateData extends ClassTemplateData<Mixin> {
 /// Base template data class for [Class], [Enum], and [Mixin].
 class ClassTemplateData<T extends Class> extends TemplateData<T> {
   final Class clazz;
+  @override
   final Library library;
   Class _objectType;
 
@@ -156,11 +189,14 @@ class ClassTemplateData<T extends Class> extends TemplateData<T> {
 
   @override
   T get self => clazz;
+
   String get linkedObjectType =>
       objectType == null ? 'Object' : objectType.linkedName;
+
   @override
   String get title =>
       '${clazz.name} ${clazz.kind} - ${library.name} library - Dart API';
+
   @override
   String get metaDescription =>
       'API docs for the ${clazz.name} ${clazz.kind} from the '
@@ -169,8 +205,10 @@ class ClassTemplateData<T extends Class> extends TemplateData<T> {
   @override
   String get layoutTitle => _layoutTitle(
       clazz.nameWithLinkedGenerics, clazz.fullkind, clazz.isDeprecated);
+
   @override
   List<Documentable> get navLinks => [packageGraph.defaultPackage, library];
+
   @override
   String get htmlBase => '../';
 
@@ -192,8 +230,9 @@ class ClassTemplateData<T extends Class> extends TemplateData<T> {
 
 /// Base template data class for [Extension].
 class ExtensionTemplateData<T extends Extension> extends TemplateData<T> {
-  final T extension;
+  @override
   final Library library;
+  final T extension;
 
   ExtensionTemplateData(TemplateOptions htmlOptions, PackageGraph packageGraph,
       this.library, this.extension)
@@ -205,6 +244,7 @@ class ExtensionTemplateData<T extends Extension> extends TemplateData<T> {
   @override
   String get title =>
       '${extension.name} ${extension.kind} - ${library.name} library - Dart API';
+
   @override
   String get metaDescription =>
       'API docs for the ${extension.name} ${extension.kind} from the '
@@ -212,13 +252,16 @@ class ExtensionTemplateData<T extends Extension> extends TemplateData<T> {
 
   @override
   String get layoutTitle => _layoutTitle(extension.name, extension.kind, false);
+
   @override
   List<Documentable> get navLinks => [packageGraph.defaultPackage, library];
+
   @override
   String get htmlBase => '../';
 }
 
 class ConstructorTemplateData extends TemplateData<Constructor> {
+  @override
   final Library library;
   final Class clazz;
   final Constructor constructor;
@@ -229,19 +272,25 @@ class ConstructorTemplateData extends TemplateData<Constructor> {
 
   @override
   Constructor get self => constructor;
+
   @override
   String get layoutTitle => _layoutTitle(
       constructor.name, constructor.fullKind, constructor.isDeprecated);
+
   @override
   List<Documentable> get navLinks => [packageGraph.defaultPackage, library];
+
   @override
   List<Documentable> get navLinksWithGenerics => [clazz];
+
   @override
   @override
   String get htmlBase => '../../';
+
   @override
   String get title => '${constructor.name} constructor - ${clazz.name} class - '
       '${library.name} library - Dart API';
+
   @override
   String get metaDescription =>
       'API docs for the ${constructor.name} constructor from the '
@@ -255,13 +304,15 @@ class EnumTemplateData extends ClassTemplateData<Enum> {
       : super(htmlOptions, packageGraph, library, eNum);
 
   Enum get eNum => clazz;
+
   @override
   Enum get self => eNum;
 }
 
 class FunctionTemplateData extends TemplateData<ModelFunction> {
-  final ModelFunction function;
+  @override
   final Library library;
+  final ModelFunction function;
 
   FunctionTemplateData(TemplateOptions htmlOptions, PackageGraph packageGraph,
       this.library, this.function)
@@ -269,64 +320,84 @@ class FunctionTemplateData extends TemplateData<ModelFunction> {
 
   @override
   ModelFunction get self => function;
+
   @override
   String get title =>
       '${function.name} function - ${library.name} library - Dart API';
+
   @override
   String get layoutTitle => _layoutTitle(
       function.nameWithGenerics, 'function', function.isDeprecated);
+
   @override
   String get metaDescription =>
       'API docs for the ${function.name} function from the '
       '${library.name} library, for the Dart programming language.';
+
   @override
   List<Documentable> get navLinks => [packageGraph.defaultPackage, library];
+
   @override
   String get htmlBase => '../';
 }
 
-class MethodTemplateData extends TemplateData<Method> {
+abstract class MemberTemplateData<T extends Documentable>
+    extends TemplateData<T> {
+  @override
   final Library library;
-  final Method method;
   final Container container;
+
+  MemberTemplateData(TemplateOptions htmlOptions, PackageGraph packageGraph,
+      this.library, this.container)
+      : super(htmlOptions, packageGraph);
+}
+
+class MethodTemplateData extends MemberTemplateData<Method> {
+  final Method method;
+
   String containerDesc;
 
   MethodTemplateData(TemplateOptions htmlOptions, PackageGraph packageGraph,
-      this.library, this.container, this.method)
-      : super(htmlOptions, packageGraph) {
+      Library library, Container container, this.method)
+      : super(htmlOptions, packageGraph, library, container) {
     containerDesc = container.isClass ? 'class' : 'extension';
   }
 
   @override
   Method get self => method;
+
   @override
   String get title =>
       '${method.name} method - ${container.name} ${containerDesc} - '
       '${library.name} library - Dart API';
+
   @override
   String get layoutTitle => _layoutTitle(
       method.nameWithGenerics, method.fullkind, method.isDeprecated);
+
   @override
   String get metaDescription =>
       'API docs for the ${method.name} method from the '
       '${container.name} ${containerDesc}, for the Dart programming language.';
+
   @override
   List<Documentable> get navLinks => [packageGraph.defaultPackage, library];
+
   @override
   List<Documentable> get navLinksWithGenerics => [container];
+
   @override
   String get htmlBase => '../../';
 }
 
-class PropertyTemplateData extends TemplateData<Field> {
-  final Library library;
-  final Container container;
+class PropertyTemplateData extends MemberTemplateData<Field> {
   final Field property;
+
   String containerDesc;
 
   PropertyTemplateData(TemplateOptions htmlOptions, PackageGraph packageGraph,
-      this.library, this.container, this.property)
-      : super(htmlOptions, packageGraph) {
+      Library library, Container container, this.property)
+      : super(htmlOptions, packageGraph, library, container) {
     containerDesc = container.isClass ? 'class' : 'extension';
   }
 
@@ -337,22 +408,28 @@ class PropertyTemplateData extends TemplateData<Field> {
   String get title =>
       '${property.name} ${property.kind} - ${container.name} ${containerDesc} - '
       '${library.name} library - Dart API';
+
   @override
   String get layoutTitle =>
       _layoutTitle(property.name, property.fullkind, property.isDeprecated);
+
   @override
   String get metaDescription =>
       'API docs for the ${property.name} ${property.kind} from the '
       '${container.name} ${containerDesc}, for the Dart programming language.';
+
   @override
   List<Documentable> get navLinks => [packageGraph.defaultPackage, library];
+
   @override
   List<Documentable> get navLinksWithGenerics => [container];
+
   @override
   String get htmlBase => '../../';
 }
 
 class TypedefTemplateData extends TemplateData<Typedef> {
+  @override
   final Library library;
   final Typedef typeDef;
 
@@ -366,20 +443,25 @@ class TypedefTemplateData extends TemplateData<Typedef> {
   @override
   String get title =>
       '${typeDef.name} typedef - ${library.name} library - Dart API';
+
   @override
   String get layoutTitle =>
       _layoutTitle(typeDef.nameWithGenerics, 'typedef', typeDef.isDeprecated);
+
   @override
   String get metaDescription =>
       'API docs for the ${typeDef.name} property from the '
       '${library.name} library, for the Dart programming language.';
+
   @override
   List<Documentable> get navLinks => [packageGraph.defaultPackage, library];
+
   @override
   String get htmlBase => '../';
 }
 
 class TopLevelPropertyTemplateData extends TemplateData<TopLevelVariable> {
+  @override
   final Library library;
   final TopLevelVariable property;
 
@@ -393,15 +475,19 @@ class TopLevelPropertyTemplateData extends TemplateData<TopLevelVariable> {
   @override
   String get title =>
       '${property.name} $_type - ${library.name} library - Dart API';
+
   @override
   String get layoutTitle =>
       _layoutTitle(property.name, _type, property.isDeprecated);
+
   @override
   String get metaDescription =>
       'API docs for the ${property.name} $_type from the '
       '${library.name} library, for the Dart programming language.';
+
   @override
   List<Documentable> get navLinks => [packageGraph.defaultPackage, library];
+
   @override
   String get htmlBase => '../';
 

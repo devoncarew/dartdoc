@@ -32,7 +32,10 @@ abstract class Container extends ModelElement {
       : super(element, library, packageGraph, null);
 
   bool get isClass => element is ClassElement;
+  Class get asClass => this;
+
   bool get isExtension => element is ExtensionElement;
+  Extension get asExtension => this;
 
   @mustCallSuper
   Iterable<ModelElement> get allModelElements => quiver.concat([
